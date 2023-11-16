@@ -1,0 +1,3 @@
+com\zy\disk\config\MPConfig.class
+com\zy\disk\config\CorsFilterConfig.class
+com\zy\disk\DiskApplication.class
