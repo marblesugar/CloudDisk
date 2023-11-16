@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="370325a8-9d88-4311-b15c-370ad6333016" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="D:\maven\repository" />
+        <option name="mavenHome" value="$PROJECT_DIR$/../../../apache-maven-3.6.3" />
+        <option name="userSettingsFile" value="D:\apache-maven-3.6.3\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2NV5ExYLNGdFiWENi2FYf6KL968" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "D:/Front workspace/element_demo",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "spring.configuration.checksum": "75688b0220ad16c4e02152b6c2b56424",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\idea\workspace\disk\src\main\resources\templates" />
+      <recent name="D:\idea\workspace\disk\src\main\resources\static" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.DiskApplication">
+    <configuration name="DeleteFileTest.testDeleteFile" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="disk" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.zjj.disk.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.zjj.disk" />
+      <option name="MAIN_CLASS_NAME" value="com.zjj.disk.DeleteFileTest" />
+      <option name="METHOD_NAME" value="testDeleteFile" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MDTest.testMD5" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="disk" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.zjj.disk.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.zjj.disk" />
+      <option name="MAIN_CLASS_NAME" value="com.zjj.disk.MDTest" />
+      <option name="METHOD_NAME" value="testMD5" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RegexTest.testRegex" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="disk" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.zjj.disk.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.zjj.disk" />
+      <option name="MAIN_CLASS_NAME" value="com.zjj.disk.RegexTest" />
+      <option name="METHOD_NAME" value="testRegex" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiskApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="disk" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.zjj.disk.DiskApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.RegexTest.testRegex" />
+        <item itemvalue="JUnit.DeleteFileTest.testDeleteFile" />
+        <item itemvalue="JUnit.MDTest.testMD5" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="370325a8-9d88-4311-b15c-370ad6333016" name="Changes" comment="" />
+      <created>1679736301151</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1679736301151</updated>
+      <workItem from="1679736303641" duration="13144000" />
+      <workItem from="1679811786670" duration="13442000" />
+      <workItem from="1679825363818" duration="10254000" />
+      <workItem from="1679835721418" duration="2644000" />
+      <workItem from="1680056291073" duration="18627000" />
+      <workItem from="1680157730427" duration="29000" />
+      <workItem from="1680186719166" duration="51000" />
+      <workItem from="1680187396961" duration="621000" />
+      <workItem from="1680487858004" duration="24000" />
+      <workItem from="1680487899581" duration="10856000" />
+      <workItem from="1680855642634" duration="11008000" />
+      <workItem from="1680871927265" duration="2573000" />
+      <workItem from="1680932060378" duration="69262000" />
+      <workItem from="1681315845207" duration="972000" />
+      <workItem from="1681371098348" duration="4987000" />
+      <workItem from="1681440068827" duration="13988000" />
+      <workItem from="1681538438022" duration="30475000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="java.lang.String" memberName="value" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="SpringBootApplicationConfigurationType">
+        <watch expression="secret" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/disk$RegexTest_testRegex.ic" NAME="RegexTest.testRegex Coverage Results" MODIFIED="1681021990468" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.zjj.disk.*</FILTER>
+    </SUITE>
+  </component>
+</project>

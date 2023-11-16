@@ -1,0 +1,39 @@
+server:
+  port: 80 # 服务器端口号
+  servlet:
+    context-path: /disk
+
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/disk?useSSL=false&serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8
+      username: root
+      password: 202031222016
+  mail:
+    protocol: smtp # 邮箱协议
+    host: smtp.qq.com # qq邮箱smtp服务器地址
+    port: 25
+    username: ###### # 发件人邮箱地址
+    password: ###### # 授权码
+    default-encoding: UTF-8 # 编码字符集
+    properties:
+      mail:
+        debug: true # 开启debug模式后会完整邮件发送过程的日志
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+  mvc:
+    static-path-pattern: /static/**
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      table-prefix: tbl_
+
+application:
+  uploadfile: ${user.dir}/src/main/resources/upload/ #文件上传路径
+  avatarfile: ${user.dir}/src/main/resources/static/avatar/ #用户头像存储路径
