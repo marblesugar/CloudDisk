@@ -1,1 +1,5 @@
+com\zy\disk\MDTest.class
 com\zy\disk\DiskApplicationTests.class
+com\zy\disk\RegexTest.class
+com\zy\disk\PageTest.class
+com\zy\disk\DeleteFileTest.class

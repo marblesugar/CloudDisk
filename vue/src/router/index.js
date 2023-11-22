@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Test from '../views/Test.vue'
+import Share from '../views/Share.vue'
 import Index from "../views/Index.vue";
 import Register from "@/views/Register";
 import Login from "@/views/Login";
@@ -25,6 +26,11 @@ const routes = [
     path: '/index',
     name: 'Index',
     component: Index
+  },
+  {
+        path: '/share',
+        name: 'Share',
+        component: Share
   },
   {
     path: '/test',
@@ -52,8 +58,8 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next)=>{
-  if (!(to.name==='Login' || to.name==='Register') && localStorage.getItem("token")===null){
+router.beforeEach((to, from, next) => {
+    if (!(to.name === 'Login' || to.name === 'Register') && localStorage.getItem("token") === null) {
     console.log("请登录！")
     Message({
       message: "请登录",

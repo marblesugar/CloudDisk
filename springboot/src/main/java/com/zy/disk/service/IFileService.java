@@ -31,6 +31,13 @@ public interface IFileService extends IService<File> {
      * @return
      */
     Page<File> getFileByPage(Integer currentPage, Integer pageSize, String curDir, Integer op);
+    /**
+     * 获得文件通过位置
+     *
+     * @param location
+     * @return
+     */
+     List<File> getFileByLoc(String location);
 
     /**
      * 下载文件

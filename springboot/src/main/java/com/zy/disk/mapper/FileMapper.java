@@ -13,4 +13,7 @@ import java.util.List;
 public interface FileMapper extends BaseMapper<File> {
     @Select("SELECT * FROM tbl_file Where id=#{id} AND is_deleted=0")
     File getById(Integer id);
+    
+    @Select("SELECT * FROM tbl_file Where file_location=#{location} AND is_deleted=0")
+    List<File> getByLoc(String location);
 }

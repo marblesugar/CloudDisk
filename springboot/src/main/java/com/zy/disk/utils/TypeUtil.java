@@ -23,7 +23,7 @@ public class TypeUtil {
         }else if (picture.contains(suf)){
             type = "图片";
         }else if (video.contains(suf)){
-            type = "视屏";
+            type = "视频";
         }else if (audio.contains(suf)){
             type = "音频";
         }else if (compress.contains(suf)){

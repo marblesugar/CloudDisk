@@ -434,4 +434,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements IF
         }
         file.delete();
     }
+    /**
+     * 根据位置获得文件所有的信息
+     * @param location
+     */
+	@Override
+	public List<File> getFileByLoc(String location) {
+		// TODO Auto-generated method stub
+		List<File> file=mapper.getByLoc(location);
+		return file;
+	}
 }

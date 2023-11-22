@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 
-/**
- * @author zjj
- * @create 2023-03-25 20:53
- */
+
 @RestController
 @RequestMapping("/user")
 public class UserController {

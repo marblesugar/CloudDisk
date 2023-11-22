@@ -1,522 +1,601 @@
 <template>
-  <div>
-    <el-container style="height: 600px">
-      <!--头像      -->
-      <el-header height="150px">
 
-        <el-row>
-          <!--头像          -->
-          <el-col :span="1" :offset="4">
-            <el-dropdown @command="handleCommand">
+    <div>
+        
+    
+        <el-container style="height: 900px">
+            <!--头像      -->
+            <el-header height="150px">
 
-              <span class="el-dropdown-link" @click="shiftUserCenter">
-                    <div class="demo-basic--circle">
-                      <div class="block"><el-avatar :size="40" :src="userInfo.avatarUrl"></el-avatar></div>
-                      <div class="sub-title"><b>{{ userInfo.username }}</b></div>
-                    </div>
-              </span>
+                <el-row>
+                    <!--头像          -->
+                    <el-col :span="1" :offset="4">
+                        <el-dropdown @command="handleCommand">
 
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="logout">退出</el-dropdown-item>
-                <el-dropdown-item command="editAvatar">编辑头像</el-dropdown-item>
-              </el-dropdown-menu>
+                            <span class="el-dropdown-link" @click="shiftUserCenter">
+                                <div class="demo-basic--circle">
+                                    <div class="block"><el-avatar :size="40" :src="userInfo.avatarUrl"></el-avatar></div>
+                                    <div class="sub-title"><b>{{ userInfo.username }}</b></div>
+                                </div>
+                            </span>
 
-              <!--退出     -->
-              <el-dialog
-                  title="提示"
-                  :visible.sync="dialogLogoutVisible"
-                  width="20%">
-                <span>确定退出吗？</span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="logout">退出</el-dropdown-item>
+                                <el-dropdown-item command="editAvatar">编辑头像</el-dropdown-item>
+                            </el-dropdown-menu>
 
-                <span slot="footer" class="dialog-footer">
-                  <el-button style="margin-left: 10px;" size="small" type="info" @click="dialogLogoutVisible = false">取 消</el-button>
-                  <el-button style="margin-left: 10px;" size="small" type="danger" @click="logout" >
-                    退出
-                  </el-button>
-                </span>
-              </el-dialog>
-              <!--头像上传-->
-              <el-dialog
-                  title="修改头像"
-                  :visible.sync="dialogUploadAvatarVisible"
-                  width="40%">
-                <el-image :src="userInfo.avatarUrl" style="height: 150px"></el-image>
-                <el-upload
-                    v-loading="loading"
-                    class="upload"
-                    ref="upload"
-                    action=""
-                    :file-list="uploadAvatarList"
-                    :auto-upload="false"
-                    :on-change="handleChangeAvatar"
-                    :on-preview="handlePreview"
-                    :on-remove="handleRemove">
-                  <el-button slot="trigger" size="small" type="primary" @click="delFile" icon="el-icon-thumb">选择文件
-                  </el-button>
+                            <!--退出     -->
+                            <el-dialog title="提示"
+                                       :visible.sync="dialogLogoutVisible"
+                                       width="20%">
+                                <span>确定退出吗？</span>
 
-                </el-upload>
+                                <span slot="footer" class="dialog-footer">
+                                    <el-button style="margin-left: 10px;" size="small" type="info" @click="dialogLogoutVisible = false">取 消</el-button>
+                                    <el-button style="margin-left: 10px;" size="small" type="danger" @click="logout">
+                                        退出
+                                    </el-button>
+                                </span>
+                            </el-dialog>
+                            <!--头像上传-->
+                            <el-dialog title="修改头像"
+                                       :visible.sync="dialogUploadAvatarVisible"
+                                       width="40%">
+                                <el-image :src="userInfo.avatarUrl" style="height: 150px"></el-image>
+                                <el-upload v-loading="loading"
+                                           class="upload"
+                                           ref="upload"
+                                           action=""
+                                           :file-list="uploadAvatarList"
+                                           :auto-upload="false"
+                                           :on-change="handleChangeAvatar"
+                                           :on-preview="handlePreview"
+                                           :on-remove="handleRemove">
+                                    <el-button slot="trigger" size="small" type="primary" @click="delFile" icon="el-icon-thumb">
+                                        选择文件
+                                    </el-button>
 
-
-                <span slot="footer" class="dialog-footer">
-                  <el-button style="margin-left: 10px;" size="small" type="info" @click="dialogUploadAvatarVisible = false">取 消</el-button>
-                  <el-button style="margin-left: 10px;" size="small" type="success" @click="uploadAvatar" icon="el-icon-upload">
-                    更换
-                  </el-button>
-                </span>
-              </el-dialog>
-
-            </el-dropdown>
-          </el-col>
-          <!--标题          -->
-          <el-col :span="14">
-            <h1 v-show="op===1"><i class="el-icon-s-home"></i>主页</h1>
-            <h1 v-show="op===2"><i class="el-icon-delete-solid"></i>回收站</h1>
-            <h1 v-show="op===3"><i class="el-icon-user-solid"></i>个人中心</h1>
-          </el-col>
-        </el-row>
-        <!--搜索结果弹出表格        -->
-        <el-dialog title="搜索结果" :visible.sync="dialogTableVisible">
-          <el-table :data="searchTableData">
-            <el-table-column
-                type="index"
-                label="序号"
-                width="100">
-            </el-table-column>
-            <el-table-column
-                prop="fileName"
-                label="文件名"
-                width="150">
-              <template scope="scope">
-                {{ scope.row.fileName }}
-                <el-button @click="editFileName(scope.row)" type="text" size="medium"><i class="el-icon-edit"></i>
-                </el-button>
-              </template>
-            </el-table-column>
-            <el-table-column
-                prop="fileType"
-                label="文件类型"
-                width="150">
-              <template scope="scope">
-                {{ scope.row.isDir === 1 ? '文件夹' : scope.row.fileType }}
-              </template>
-            </el-table-column>
-            <el-table-column
-                label="文件大小">
-              <template scope="scope">
-                {{ scope.row.fileSize + 'bytes' }}
-              </template>
-            </el-table-column>
-            <el-table-column
-                fixed="right"
-                label="操作"
-                width="200">
-              <template slot-scope="scope">
-                <el-button @click="download(scope.row)" type="text" size="medium" icon="el-icon-download">下载</el-button>
-                <el-button @click="deleteFile(scope.row)" type="text" size="medium" icon="el-icon-delete">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-dialog>
-        <!--搜索        -->
-        <el-row v-show="op===1">
-          <el-col :span="6" :offset="8">
-            <el-input
-                placeholder="在此目录中进行搜索"
-                v-model="fileKeyWord"
-                clearable
-                @keyup.enter.native="searchFileInCurDir">
-            </el-input>
-          </el-col>
-          <el-col :span="2">
-            <el-button type="success" round icon="el-icon-search" @click="searchFileInCurDir">搜索</el-button>
-          </el-col>
-
-          <!--文件上传        -->
-          <el-col :span="4">
-            <el-upload
-                v-loading="loading"
-                class="upload"
-                ref="upload"
-                action=""
-                :file-list="uploadFileList"
-                :auto-upload="false"
-                :on-change="handleChange"
-                :on-preview="handlePreview"
-                :on-remove="handleRemove">
-              <el-button slot="trigger" size="small" type="primary" @click="delFile" icon="el-icon-thumb" v-show="op===1">选择文件
-              </el-button>
-              <el-button style="margin-left: 10px;" size="small" type="success" @click="upload" icon="el-icon-upload" v-show="op===1">
-                上传到服务器
-              </el-button>
-            </el-upload>
-
-          </el-col>
-        </el-row>
-        <!--目录        -->
-        <el-row>
-          <el-col :span="16" :offset="4">
-            <div v-show="op===1">
-              <div style="float: left">
-                <el-link type="primary" icon="el-icon-s-home" @click="toIndexDir" :underline="false">主目录</el-link>
-                <el-link v-for="item in dirList" type="primary" icon="el-icon-arrow-right" @click="enterDirById(item.id)"
-                         :underline="false">{{ item.dirName }}
-                </el-link>
-              </div>
-              <div v-show="dirList.length!=0" style="float: right">
-                <el-link type="primary" icon="el-icon-back" @click="returnDir">返回</el-link>
-              </div>
-            </div>
-            <div v-show="op===2" style="float: left">
-              <el-link type="danger" icon="el-icon-delete-solid" @click="deleteAllForever" :underline="false">删除所有文件</el-link>
-            </div>
-          </el-col>
-        </el-row>
-        <!--处理多选            -->
-        <el-row>
-          <el-col :span="16" :offset="4">
-            <div v-show="multipleSelection.length !== 0">
-              <el-button v-if="op===1" size="mini" type="primary" icon="el-icon-download" @click="doSelect(1)" >下载所选</el-button>
-              <el-button v-else size="mini" type="primary" icon="el-icon-refresh-left" @click="doSelect(2)" >恢复所选</el-button>
-              <el-button type="danger" size="mini" icon="el-icon-delete" @click="doSelect(3)" >删除所选</el-button>
-            </div>
-          </el-col>
-        </el-row>
-
-      </el-header>
+                                </el-upload>
 
 
-      <el-main>
-        <el-row>
-          <el-col :span="4">
-            <h3><i class="el-icon-location"></i> 导航</h3>
-            <el-menu
-                ref="menu"
-                default-active="1"
-                class="el-menu-vertical-demo"
-                @open="handleOpen"
-                @close="handleClose">
-              <el-menu-item index="1" @click="shiftIndex">
-                <template slot="title">
-                  <i :class="op===1?'el-icon-s-promotion':'el-icon-house'"></i>
-                  <span>主页</span>
-                </template>
-              </el-menu-item>
-              <el-menu-item index="2" @click="shiftRecycle">
-                <i :class="op===2?'el-icon-s-promotion':'el-icon-delete'"></i>
-                <span slot="title">回收站</span>
-              </el-menu-item>
-              <el-menu-item id="userCenter" index="3" @click="shiftUserCenter">
-                <i :class="op===3?'el-icon-s-promotion':'el-icon-user'"></i>
-                <span slot="title">个人中心</span>
-              </el-menu-item>
-            </el-menu>
-          </el-col>
+                                <span slot="footer" class="dialog-footer">
+                                    <el-button style="margin-left: 10px;" size="small" type="info" @click="dialogUploadAvatarVisible = false">取 消</el-button>
+                                    <el-button style="margin-left: 10px;" size="small" type="success" @click="uploadAvatar" icon="el-icon-upload">
+                                        更换
+                                    </el-button>
+                                </span>
+                            </el-dialog>
 
-          <!--分页查询          -->
-          <el-col :span="16" v-show="op===1||op===2">
-            <el-table
-                ref="tableData"
-                :data="tableData"
-                style="width: 100%"
-                :row-class-name="tableRowClassName"
-                @selection-change="handleSelectionChange">
-              <el-table-column
-                  type="selection"
-                  width="55">
-              </el-table-column>
-              <el-table-column
-                  type="index"
-                  label="序号"
-                  width="100"
-                  :index="(pageInfo.current-1)*pageInfo.size+1">
-              </el-table-column>
-              <el-table-column
-                  prop="fileName"
-                  label="文件名"
-                  width="180">
-                <template scope="scope">
-                  {{ scope.row.fileName }}
-                  <el-button @click="editFileName(scope.row)" type="text" size="medium" v-if="op===1"><i class="el-icon-edit"></i>
-                  </el-button>
-                </template>
-              </el-table-column>
-              <el-table-column
-                  prop="fileType"
-                  label="文件类型"
-                  width="180">
-                <template scope="scope">
-                  {{ scope.row.isDir === 1 ? '文件夹' : scope.row.fileType }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                  label="文件(夹)大小">
-                <template scope="scope">
-                  {{ (scope.row.fileSize/1024.0).toFixed(2) + 'kb' }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                  fixed="right"
-                  label="操作"
-                  width="300">
-                <template slot-scope="scope">
-                  <el-button @click="deleteFile(scope.row)" type="text" size="medium" icon="el-icon-delete" v-if="op===1" style="color: rgb(245,108,108)">
-                    删除
-                  </el-button>
-                  <el-button @click="deleteSingleForever(scope.row)" type="text" size="medium" icon="el-icon-delete" v-else-if="op===2" style="color: rgb(245,108,108)">
-                    永久删除
-                  </el-button>
-                  <el-button @click="download(scope.row)" type="text" size="medium" icon="el-icon-download" v-if="op===1&&scope.row.isDir===0">
-                    下载
-                  </el-button>
-                  <el-button @click="recovery(scope.row)" type="text" size="medium" icon="el-icon-refresh-left" v-else-if="op===2">
-                    恢复
-                  </el-button>
-                  <el-button v-if="scope.row.isDir===1&&op===1" @click="enterDir(scope.row)" type="text" size="medium"
-                             icon="el-icon-folder-opened">进入文件夹
-                  </el-button>
+                        </el-dropdown>
+                    </el-col>
+                    <!--标题 -->
+                    <el-col :span="14">
+                        <h1 v-show="op===1"><i class="el-icon-s-home"></i>主页</h1>
+                        <h1 v-show="op===2"><i class="el-icon-delete-solid"></i>回收站</h1>
+                        <h1 v-show="op===3"><i class="el-icon-share"></i>我的分享</h1>
+                        <h1 v-show="op===4"><i class="el-icon-user-solid"></i>个人中心</h1>
+                    </el-col>
+                </el-row>
 
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
+                <!--  分享弹出框 -->
+                <el-dialog title="分享" :visible.sync="dialogShareVisible">
+                    <span>{{shareUrl}}</span>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogShareVisible = false">返回</el-button>
+                        <el-button type="primary" @click="copy">复制</el-button>
+                    </span>
+                </el-dialog>
 
-          <!--用户中心          -->
-          <el-col :span="16" v-show="op===3">
-            <!--头像-->
-            <el-row>
-              <el-col :span="16" :offset="4">
-                <span class="el-dropdown-link" @click="dialogUploadAvatarVisible=true">
-                    <div class="demo-basic--circle">
-                      <div class="block">
-                        <el-avatar :size="100" :src="userInfo.avatarUrl"></el-avatar>
-                      </div>
-                    </div>
-              </span>
-              </el-col>
-            </el-row>
-            <!--用户信息表单-->
-            <el-row>
-              <el-dialog title="用户信息" :visible.sync="dialogUserFormVisible">
-                <el-form :model="userInfoForm" :rules="UserInfoFormRules" ref="userInfoForm" label-width="100px" class="demo-ruleForm">
-                  <el-form-item label="用户名" prop="username">
-                    <el-input v-model="userInfoForm.username" style="width: 40%;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="邮箱">
-                    <el-input v-model="userInfoForm.email" disabled style="width: 40%;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="生日" prop="birthDay">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="userInfoForm.birthDay" style="width: 40%;" value-format="yyyy-MM-dd"></el-date-picker>
-                  </el-form-item>
-                  <el-form-item label="性别" prop="sex">
-                    <el-radio-group v-model="userInfoForm.sex">
-                      <el-radio label="男" value="0"></el-radio>
-                      <el-radio label="女" value="1"></el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                  <el-form-item label="活动区域" prop="country">
-                    <el-select v-model="userInfoForm.country" placeholder="请选择国家" style="width: 40%;">
-                      <el-option label="中国" value="中国"></el-option>
-                      <el-option label="美国" value="美国"></el-option>
-                      <el-option label="英国" value="英国"></el-option>
-                      <el-option label="法国" value="法国"></el-option>
-                      <el-option label="俄罗斯" value="俄罗斯"></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="民族" prop="nation">
-                    <el-input v-model="userInfoForm.nation" placeholder="填写您的民族" style="width: 40%;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="职业" prop="occupation">
-                    <el-input v-model="userInfoForm.occupation" placeholder="填写您的职业" style="width: 40%;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="工作单位" prop="workPlace">
-                    <el-input v-model="userInfoForm.workPlace" placeholder="填写您的工作单位" style="width: 40%;"></el-input>
-                  </el-form-item>
-                  <el-form-item label="居住地" prop="homePlace">
-                    <el-input v-model="userInfoForm.homePlace" placeholder="填写您的居住地" style="width: 40%;"></el-input>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button @click="resetForm('userInfoForm')">重置</el-button>
-                  </el-form-item>
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                  <el-button @click="dialogUserFormVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="submitForm('userInfoForm')">确定</el-button>
-                </div>
-              </el-dialog>
-              <!--用户信息-->
-              <el-col :span="16" :offset="4">
-                <el-descriptions class="margin-top" title="您的信息" :column="3" :size="size">
-                  <template slot="extra">
-                    <el-button type="warning" size="small" @click="dialogUserFormVisible=true" icon="el-icon-edit" plain>编辑</el-button>
-                  </template>
-                  <el-descriptions-item label="用户名">
-                    <el-tag>{{ userInfo.username }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="邮箱">
-                    <el-tag>{{ userInfo.email }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="生日">
-                    <el-tag :type="userInfo.birthDay===null||userInfo.birthDay===''?'success':''">{{ userInfo.birthDay===null||userInfo.birthDay===''?'暂未填写':userInfo.birthDay }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="性别">
-                    <el-tag :type="userInfo.sex===null||userInfo.sex===''?'success':''">{{ userInfo.sex===null||userInfo.sex===''?'暂未填写':userInfo.sex }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="国家">
-                    <el-tag :type="userInfo.country===null||userInfo.country===''?'success':''">{{ userInfo.country===null||userInfo.country===''?'暂未填写':userInfo.country }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="民族">
-                    <el-tag :type="userInfo.nation===null||userInfo.nation===''?'success':''">{{ userInfo.nation===null||userInfo.nation===''?'暂未填写':userInfo.nation }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="职业">
-                    <el-tag :type="userInfo.occupation===null||userInfo.occupation===''?'success':''">{{ userInfo.occupation===null||userInfo.occupation===''?'暂未填写':userInfo.occupation }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="工作单位">
-                    <el-tag :type="userInfo.workPlace===null||userInfo.workPlace===''?'success':''">{{ userInfo.workPlace===null||userInfo.workPlace===''?'暂未填写':userInfo.workPlace }}</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="居住地">
-                    <el-tag :type="userInfo.homePlace===null||userInfo.homePlace===''?'success':''">{{ userInfo.homePlace===null||userInfo.homePlace===''?'暂未填写':userInfo.homePlace }}</el-tag>
-                  </el-descriptions-item>
-                </el-descriptions>
-              </el-col>
-            </el-row>
+                <!--搜索结果弹出表格        -->
+                <el-dialog title="搜索结果" :visible.sync="dialogTableVisible">
+                    <el-table :data="searchTableData">
+                        <el-table-column type="index"
+                                         label="序号"
+                                         width="100">
+                        </el-table-column>
+                        <el-table-column prop="fileName"
+                                         label="文件名"
+                                         width="150">
+                            <template scope="scope">
+                                {{ scope.row.fileName }}
+                                <el-button @click="editFileName(scope.row)" type="text" size="medium">
+                                    <i class="el-icon-edit"></i>
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="fileType"
+                                         label="文件类型"
+                                         width="150">
+                            <template scope="scope">
+                                {{ scope.row.isDir === 1 ? '文件夹' : scope.row.fileType }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="文件大小">
+                            <template scope="scope">
+                                {{ scope.row.fileSize + 'bytes' }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column fixed="right"
+                                         label="操作"
+                                         width="200">
+                            <template slot-scope="scope">
+                                <el-button @click="download(scope.row)" type="text" size="medium" icon="el-icon-download">下载</el-button>
+                                <el-button @click="deleteFile(scope.row)" type="text" size="medium" icon="el-icon-delete">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-dialog>
 
-           <el-row>
-             <!--修改用户密码-->
-             <el-button type="warning" plain @click="openChangePasswordDialog" icon="el-icon-key" style="margin: 5px">修改密码</el-button>
-             <el-dialog title="修改密码" :visible.sync="dialogChangePasswordFormVisible" width="500px">
-               <el-form :model="changePasswordForm" :rules="changePasswordFormRules" ref="changePasswordForm" label-width="100px" class="demo-ruleForm">
-                 <el-form-item label="旧密码" prop="oldPassword">
-                   <el-input show-password v-model="changePasswordForm.oldPassword" ></el-input>
-                 </el-form-item>
-                 <el-form-item label="新密码" prop="newPassword">
-                   <el-input show-password v-model="changePasswordForm.newPassword" ></el-input>
-                 </el-form-item>
-                 <el-form-item label="确认密码" prop="confirmPassword">
-                   <el-input show-password v-model="changePasswordForm.confirmPassword"></el-input>
-                 </el-form-item>
-                 <el-form-item>
-                   <el-button @click="resetForm('changePasswordForm')">重置</el-button>
-                 </el-form-item>
-               </el-form>
-               <div slot="footer" class="dialog-footer">
-                 <el-button @click="dialogChangePasswordFormVisible = false">取 消</el-button>
-                 <el-button type="primary" @click="submitForm('changePasswordForm')">确定</el-button>
-               </div>
-             </el-dialog>
-             <!--修改用户邮箱-->
-             <el-button type="warning" plain @click="openChangeEmailDialog" icon="el-icon-edit-outline" style="margin: 5px">修改邮箱</el-button>
-             <el-dialog title="修改邮箱" :visible.sync="dialogChangeEmailFormVisible" width="500px">
-               <el-steps :active="step" finish-status="success" simple style="margin-top: 20px">
-                 <el-step title="步骤 1" ></el-step>
-                 <el-step title="步骤 2" ></el-step>
-                 <el-step title="步骤 3" ></el-step>
-               </el-steps>
-               <div style="height: 30px"></div>
+                <!--搜索        -->
+                <el-row v-show="op===1">
+                    <el-col :span="6" :offset="8">
+                        <el-input placeholder="在此目录中进行搜索"
+                                  v-model="fileKeyWord"
+                                  clearable
+                                  @keyup.enter.native="searchFileInCurDir">
+                        </el-input>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button type="success" round icon="el-icon-search" @click="searchFileInCurDir">搜索</el-button>
+                    </el-col>
 
-               <div v-show="step===3">
-                 <h3>邮箱修改完成！^_^</h3>
-               </div>
-               <el-form v-show="step!==3" :model="changeEmailForm" :rules="changeEmailFormStep2Rules" :ref="step===1?'changeEmailFormStep1':'changeEmailFormStep2'" label-width="100px" class="demo-ruleForm">
-                 <el-form-item v-if="step===1" label="旧邮箱">
-                   <el-input disabled v-model="userInfo.email" ></el-input>
-                 </el-form-item>
-                 <el-form-item v-else-if="step===2" label="新邮箱" prop="email">
-                   <el-input v-model="changeEmailForm.email" ></el-input>
-                 </el-form-item>
+                    <!--文件上传        -->
+                    <el-col :span="4">
+                        <el-upload v-loading="loading"
+                                   class="upload"
+                                   ref="upload"
+                                   action=""
+                                   :file-list="uploadFileList"
+                                   :auto-upload="false"
+                                   :on-change="handleChange"
+                                   :on-preview="handlePreview"
+                                   :on-remove="handleRemove">
+                            <el-button slot="trigger" size="small" type="primary" @click="delFile" icon="el-icon-thumb" v-show="op===1">
+                                选择文件
+                            </el-button>
+                            <el-button style="margin-left: 10px;" size="small" type="success" @click="upload" icon="el-icon-upload" v-show="op===1">
+                                上传到服务器
+                            </el-button>
+                        </el-upload>
 
-                 <el-form-item label="验证码" prop="validationCode">
-                   <el-input v-model="changeEmailForm.validationCode" style="width: 250px;float: left"></el-input>
-                   <el-button type="primary" size="small" @click="sendValidationCode"
-                              :disabled="sendEmailLoading"
-                              v-loading="sendEmailLoading"
-                              :element-loading-text="loadingTime+'s后重试'"
-                              element-loading-spinner="el-icon-loading"
-                              element-loading-background="rgba(0, 0, 0, 0.8)"
-                   >发送验证码</el-button>
-                 </el-form-item>
-               </el-form>
-               <div slot="footer" class="dialog-footer">
-                 <el-button :type="step!==3?'':'primary'" @click="dialogChangeEmailFormVisible = false" v-text="step!==3?'取 消':'完 成'"></el-button>
-                 <el-button v-if="step === 1" type="primary" @click="submitForm('changeEmailFormStep1')">下一步</el-button>
-                 <el-button v-if="step === 2" type="primary" @click="submitForm('changeEmailFormStep2')">确 定</el-button>
-               </div>
-             </el-dialog>
-           </el-row>
+                    </el-col>
+                </el-row>
+                <!--目录        -->
+                <el-row>
+                    <el-col :span="16" :offset="4">
+                        <div v-show="op===1">
+                            <div style="float: left">
+                                <el-link type="primary" icon="el-icon-s-home" @click="toIndexDir" :underline="false">主目录</el-link>
+                                <el-link v-for="item in dirList" type="primary" icon="el-icon-arrow-right" @click="enterDirById(item.id)"
+                                         :underline="false">
+                                    {{ item.dirName }}
+                                </el-link>
+                            </div>
+                            <div v-show="dirList.length!=0" style="float: right">
+                                <el-link type="primary" icon="el-icon-back" @click="returnDir">返回</el-link>
+                            </div>
+                        </div>
+                        <div v-show="op===2" style="float: left">
+                            <el-link type="danger" icon="el-icon-delete-solid" @click="deleteAllForever" :underline="false">删除所有文件</el-link>
+                        </div>
+                    </el-col>
+                </el-row>
+                <!--处理多选            -->
+                <el-row>
+                    <el-col :span="16" :offset="4">
+                        <div v-show="multipleSelection.length !== 0">
+                            <el-button v-if="op===1" size="mini" type="primary" icon="el-icon-download" @click="doSelect(1)">下载所选</el-button>
+                            <el-button v-else size="mini" type="primary" icon="el-icon-refresh-left" @click="doSelect(2)">恢复所选</el-button>
+                            <el-button type="danger" size="mini" icon="el-icon-delete" @click="doSelect(3)">删除所选</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
 
-            <!--TODO 注销账户-->
-            <el-button type="danger" plain @click="openCancelAccountDialog" icon="el-icon-circle-close" style="margin: 5px">注销账户</el-button>
-            <el-dialog title="注销账号" :visible.sync="dialogCancelAccountFormVisible" width="500px">
-              <el-steps :active="step" finish-status="success" simple style="margin-top: 20px">
-                <el-step title="步骤 1" ></el-step>
-                <el-step title="步骤 2" ></el-step>
-                <el-step title="步骤 3" ></el-step>
-              </el-steps>
-              <div style="height: 30px"></div>
+            </el-header>
 
 
-              <el-form v-show="step===1" :model="cancelAccountForm" ref="cancelAccountForm" label-width="100px" class="demo-ruleForm">
-                <el-form-item v-if="step===1" label="您的邮箱">
-                  <el-input disabled v-model="userInfo.email" ></el-input>
-                </el-form-item>
+            <el-main style="height:600px;">
+                <el-row>
+                    <el-col :span="4">
+                        <h3><i class="el-icon-location"></i> 导航</h3>
+                        <el-menu ref="menu"
+                                 default-active="1"
+                                 class="el-menu-vertical-demo"
+                                 @open="handleOpen"
+                                 @close="handleClose">
+                            <el-menu-item index="1" @click="shiftIndex">
+                                <template slot="title">
+                                    <i :class="op===1?'el-icon-s-promotion':'el-icon-house'"></i>
+                                    <span>主页</span>
+                                </template>
+                            </el-menu-item>
+                            <el-menu-item index="2" @click="shiftRecycle">
+                                <i :class="op===2?'el-icon-s-promotion':'el-icon-delete'"></i>
+                                <span slot="title">回收站</span>
+                            </el-menu-item>
+                            <el-menu-item index="3" @click="shiftShare">
+                                <i :class="op===3?'el-icon-s-promotion':'el-icon-share'"></i>
+                                <span slot="title">我的分享</span>
+                            </el-menu-item>
+                            <el-menu-item id="userCenter" index="4" @click="shiftUserCenter">
+                                <i :class="op===4?'el-icon-s-promotion':'el-icon-user'"></i>
+                                <span slot="title">个人中心</span>
+                            </el-menu-item>
+                        </el-menu>
+                    </el-col>
 
-                <el-form-item label="验证码" prop="validationCode">
-                  <el-input v-model="cancelAccountForm.validationCode" style="width: 250px;float: left"></el-input>
-                  <el-button type="primary" size="small" @click="sendValidationCode"
-                             :disabled="sendEmailLoading"
-                             v-loading="sendEmailLoading"
-                             :element-loading-text="loadingTime+'s后重试'"
-                             element-loading-spinner="el-icon-loading"
-                             element-loading-background="rgba(0, 0, 0, 0.8)"
-                  >发送验证码</el-button>
-                </el-form-item>
-              </el-form>
-              <div v-show="step===2">
-                <h3>注销账号后不能反悔了哦</h3>
-                <ul>
-                  <li style="list-style-type: none">用户上传的文件将被清除</li>
-                  <li style="list-style-type: none">用户的个人信息将被清除</li>
-                </ul>
-              </div><div v-show="step===3">
-              <h2>注销账号成功</h2>
-              <h4>即将前往登录页面</h4>
-            </div>
-              <div slot="footer" class="dialog-footer">
-                <el-button v-if="step !== 3" type="primary" @click="dialogCancelAccountFormVisible = false" >取 消</el-button>
-                <el-button v-if="step === 1" type="primary" @click="submitForm('cancelAccountForm')">下一步</el-button>
-                <el-button v-if="step === 2" type="primary" @click="cancelAccount">确 定</el-button>
-              </div>
-            </el-dialog>
-          </el-col>
-        </el-row>
-      </el-main>
+                    <!--分页查询 ，文件查询         -->
+                    <el-col :span="16" v-show="op===1||op===2">
+                        <el-table ref="tableData"
+                                  :data="tableData"
+                                  style="width: 100%"
+                                  :row-class-name="tableRowClassName"
+                                  @selection-change="handleSelectionChange">
 
-      <el-footer>
-        <el-row v-show="op===1||op===2">
-          <el-col :span="2" :offset="4">
-            <el-button type="primary" @click="createDir" size="small" icon="el-icon-folder-add" v-show="op===1">新建目录</el-button>
-          </el-col>
-          <el-col :span="6" :offset="op===1?6:12">
-            <el-pagination
-                background
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                layout="sizes, prev, pager, next"
-                :page-sizes="[3, 5, 7, 9]"
-                :page-size="pageInfo.size"
-                :total="pageInfo.total"
-                :current-page="pageInfo.current">
-            </el-pagination>
-          </el-col>
-        </el-row>
-      </el-footer>
+                            <el-table-column type="selection" width="55">
+                            </el-table-column>
+                            <!--序号 -->
+                            <el-table-column type="index"
+                                             label="序号"
+                                             width="100"
+                                             :index="(pageInfo.current-1)*pageInfo.size+1">
+                            </el-table-column>
+                            <!--文件名字 -->
+                            <el-table-column prop="fileName"
+                                             label="文件名"
+                                             width="180">
+                                <template scope="scope">
+                                    {{ scope.row.fileName }}
+                                    <el-button @click="editFileName(scope.row)" type="text" size="medium" v-if="op===1">
+                                        <i class="el-icon-edit"></i>
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                            <!--文件类型 -->
+                            <el-table-column prop="fileType"
+                                             label="文件类型"
+                                             width="180">
+                                <template scope="scope">
+                                    {{ scope.row.isDir === 1 ? '文件夹' : scope.row.fileType }}
+                                </template>
+                            </el-table-column>
+                            <!--文件夹大小 -->
+                            <el-table-column label="文件(夹)大小">
+                                <template scope="scope">
+                                    {{ (scope.row.fileSize/1024.0).toFixed(2) + 'kb' }}
+                                </template>
+                            </el-table-column>
 
-    </el-container>
-  </div>
+                            <el-table-column fixed="right"
+                                             label="操作"
+                                             width="300">
+                                <template slot-scope="scope">
+                                    <el-button @click="deleteFile(scope.row)" type="text" size="medium" icon="el-icon-delete" v-if="op===1" style="color: rgb(245,108,108)">
+                                        删除
+                                    </el-button>
+
+                                    <el-button @click="deleteSingleForever(scope.row)" type="text" size="medium" icon="el-icon-delete" v-else-if="op===2" style="color: rgb(245,108,108)">
+                                        永久删除
+                                    </el-button>
+
+                                    <el-button @click="download(scope.row)" type="text" size="medium" icon="el-icon-download" v-if="op===1&&scope.row.isDir===0">
+                                        下载
+                                    </el-button>
+
+                                    <el-button @click="viewSingle(scope.row)" type="text" size="medium" icon="el-icon-view" v-if="op===1&&scope.row.isDir===0">
+                                        查看
+                                    </el-button>
+
+                                    <el-button @click="shareSingle(scope.row)" type="text" size="medium" icon="el-icon-share" v-if="op===1&&scope.row.isDir===0">
+                                        分享
+                                    </el-button>
+
+
+                                    <el-button @click="recovery(scope.row)" type="text" size="medium" icon="el-icon-refresh-left" v-else-if="op===2">
+                                        恢复
+                                    </el-button>
+
+                                    <el-button v-if="scope.row.isDir===1&&op===1" @click="enterDir(scope.row)" type="text" size="medium"
+                                               icon="el-icon-folder-opened">
+                                        进入文件夹
+                                    </el-button>
+
+                                </template>
+
+                            </el-table-column>
+                        </el-table>
+                    </el-col>
+                    <!--分页查询 ，分享查询         -->
+                    <el-col :span="16" v-show="op===3">
+                        <el-table ref="tableData"
+                                  :data="tableData"
+                                  style="width: 100%"
+                                  :row-class-name="tableRowClassName"
+                                  @selection-change="handleSelectionChange">
+
+                            <el-table-column type="selection" width="55">
+                            </el-table-column>
+                            <!--序号 -->
+                            <el-table-column type="index"
+                                             label="序号"
+                                             width="100"
+                                             :index="(pageInfo.current-1)*pageInfo.size+1">
+                            </el-table-column>
+                            <!--分享地址 -->
+                            <el-table-column prop="fileName"
+                                             label="文件名"
+                                             width="500">
+                                <template scope="scope">
+                                    http://localhost:8080/share?shareUrl=
+                                    {{ scope.row.shareUrl }}
+                                    <el-button @click="editFileName(scope.row)" type="text" size="medium" v-if="op===1">
+                                        <i class="el-icon-edit"></i>
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                            
+
+                            <el-table-column fixed="right"
+                                             label="操作"
+                                             width="300">
+                                <template slot-scope="scope">
+
+                                    <el-button @click="deleteSingleForever(scope.row)" type="text" size="medium" icon="el-icon-thumb">
+                                        复制
+                                    </el-button>
+
+                                    <el-button @click="updateShare(scope.row)" type="text" size="medium" icon="el-icon-connection">
+                                        私密
+                                    </el-button>
+
+
+                                    <el-button @click="deleteShare(scope.row)" type="text" size="medium" icon="el-icon-delete" style="color: rgb(245,108,108)">
+                                        删除
+                                    </el-button>
+
+
+
+                                </template>
+
+                            </el-table-column>
+                        </el-table>
+                    </el-col>
+
+                    <!--用户中心          -->
+                    <el-col :span="16" v-show="op===4">
+                        <!--头像-->
+                        <el-row>
+                            <el-col :span="16" :offset="4">
+                                <span class="el-dropdown-link" @click="dialogUploadAvatarVisible=true">
+                                    <div class="demo-basic--circle">
+                                        <div class="block">
+                                            <el-avatar :size="100" :src="userInfo.avatarUrl"></el-avatar>
+                                        </div>
+                                    </div>
+                                </span>
+                            </el-col>
+                        </el-row>
+                        <!--用户信息表单-->
+                        <el-row>
+                            <el-dialog title="用户信息" :visible.sync="dialogUserFormVisible">
+                                <el-form :model="userInfoForm" :rules="UserInfoFormRules" ref="userInfoForm" label-width="100px" class="demo-ruleForm">
+                                    <el-form-item label="用户名" prop="username">
+                                        <el-input v-model="userInfoForm.username" style="width: 40%;"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="邮箱">
+                                        <el-input v-model="userInfoForm.email" disabled style="width: 40%;"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="生日" prop="birthDay">
+                                        <el-date-picker type="date" placeholder="选择日期" v-model="userInfoForm.birthDay" style="width: 40%;" value-format="yyyy-MM-dd"></el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="性别" prop="sex">
+                                        <el-radio-group v-model="userInfoForm.sex">
+                                            <el-radio label="男" value="0"></el-radio>
+                                            <el-radio label="女" value="1"></el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="活动区域" prop="country">
+                                        <el-select v-model="userInfoForm.country" placeholder="请选择国家" style="width: 40%;">
+                                            <el-option label="中国" value="中国"></el-option>
+                                            <el-option label="美国" value="美国"></el-option>
+                                            <el-option label="英国" value="英国"></el-option>
+                                            <el-option label="法国" value="法国"></el-option>
+                                            <el-option label="俄罗斯" value="俄罗斯"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="民族" prop="nation">
+                                        <el-input v-model="userInfoForm.nation" placeholder="填写您的民族" style="width: 40%;"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="职业" prop="occupation">
+                                        <el-input v-model="userInfoForm.occupation" placeholder="填写您的职业" style="width: 40%;"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="工作单位" prop="workPlace">
+                                        <el-input v-model="userInfoForm.workPlace" placeholder="填写您的工作单位" style="width: 40%;"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="居住地" prop="homePlace">
+                                        <el-input v-model="userInfoForm.homePlace" placeholder="填写您的居住地" style="width: 40%;"></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button @click="resetForm('userInfoForm')">重置</el-button>
+                                    </el-form-item>
+                                </el-form>
+                                <div slot="footer" class="dialog-footer">
+                                    <el-button @click="dialogUserFormVisible = false">取 消</el-button>
+                                    <el-button type="primary" @click="submitForm('userInfoForm')">确定</el-button>
+                                </div>
+                            </el-dialog>
+                            <!--用户信息-->
+                            <el-col :span="16" :offset="4">
+                                <el-descriptions class="margin-top" title="您的信息" :column="3" :size="size">
+                                    <template slot="extra">
+                                        <el-button type="warning" size="small" @click="dialogUserFormVisible=true" icon="el-icon-edit" plain>编辑</el-button>
+                                    </template>
+                                    <el-descriptions-item label="用户名">
+                                        <el-tag>{{ userInfo.username }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="邮箱">
+                                        <el-tag>{{ userInfo.email }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="生日">
+                                        <el-tag :type="userInfo.birthDay===null||userInfo.birthDay===''?'success':''">{{ userInfo.birthDay===null||userInfo.birthDay===''?'暂未填写':userInfo.birthDay }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="性别">
+                                        <el-tag :type="userInfo.sex===null||userInfo.sex===''?'success':''">{{ userInfo.sex===null||userInfo.sex===''?'暂未填写':userInfo.sex }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="国家">
+                                        <el-tag :type="userInfo.country===null||userInfo.country===''?'success':''">{{ userInfo.country===null||userInfo.country===''?'暂未填写':userInfo.country }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="民族">
+                                        <el-tag :type="userInfo.nation===null||userInfo.nation===''?'success':''">{{ userInfo.nation===null||userInfo.nation===''?'暂未填写':userInfo.nation }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="职业">
+                                        <el-tag :type="userInfo.occupation===null||userInfo.occupation===''?'success':''">{{ userInfo.occupation===null||userInfo.occupation===''?'暂未填写':userInfo.occupation }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="工作单位">
+                                        <el-tag :type="userInfo.workPlace===null||userInfo.workPlace===''?'success':''">{{ userInfo.workPlace===null||userInfo.workPlace===''?'暂未填写':userInfo.workPlace }}</el-tag>
+                                    </el-descriptions-item>
+                                    <el-descriptions-item label="居住地">
+                                        <el-tag :type="userInfo.homePlace===null||userInfo.homePlace===''?'success':''">{{ userInfo.homePlace===null||userInfo.homePlace===''?'暂未填写':userInfo.homePlace }}</el-tag>
+                                    </el-descriptions-item>
+                                </el-descriptions>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <!--修改用户密码-->
+                            <el-button type="warning" plain @click="openChangePasswordDialog" icon="el-icon-key" style="margin: 5px">修改密码</el-button>
+                            <el-dialog title="修改密码" :visible.sync="dialogChangePasswordFormVisible" width="500px">
+                                <el-form :model="changePasswordForm" :rules="changePasswordFormRules" ref="changePasswordForm" label-width="100px" class="demo-ruleForm">
+                                    <el-form-item label="旧密码" prop="oldPassword">
+                                        <el-input show-password v-model="changePasswordForm.oldPassword"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="新密码" prop="newPassword">
+                                        <el-input show-password v-model="changePasswordForm.newPassword"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="确认密码" prop="confirmPassword">
+                                        <el-input show-password v-model="changePasswordForm.confirmPassword"></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button @click="resetForm('changePasswordForm')">重置</el-button>
+                                    </el-form-item>
+                                </el-form>
+                                <div slot="footer" class="dialog-footer">
+                                    <el-button @click="dialogChangePasswordFormVisible = false">取 消</el-button>
+                                    <el-button type="primary" @click="submitForm('changePasswordForm')">确定</el-button>
+                                </div>
+                            </el-dialog>
+                            <!--修改用户邮箱-->
+                            <el-button type="warning" plain @click="openChangeEmailDialog" icon="el-icon-edit-outline" style="margin: 5px">修改邮箱</el-button>
+                            <el-dialog title="修改邮箱" :visible.sync="dialogChangeEmailFormVisible" width="500px">
+                                <el-steps :active="step" finish-status="success" simple style="margin-top: 20px">
+                                    <el-step title="步骤 1"></el-step>
+                                    <el-step title="步骤 2"></el-step>
+                                    <el-step title="步骤 3"></el-step>
+                                </el-steps>
+                                <div style="height: 30px"></div>
+
+                                <div v-show="step===3">
+                                    <h3>邮箱修改完成！^_^</h3>
+                                </div>
+                                <el-form v-show="step!==3" :model="changeEmailForm" :rules="changeEmailFormStep2Rules" :ref="step===1?'changeEmailFormStep1':'changeEmailFormStep2'" label-width="100px" class="demo-ruleForm">
+                                    <el-form-item v-if="step===1" label="旧邮箱">
+                                        <el-input disabled v-model="userInfo.email"></el-input>
+                                    </el-form-item>
+                                    <el-form-item v-else-if="step===2" label="新邮箱" prop="email">
+                                        <el-input v-model="changeEmailForm.email"></el-input>
+                                    </el-form-item>
+
+                                    <el-form-item label="验证码" prop="validationCode">
+                                        <el-input v-model="changeEmailForm.validationCode" style="width: 250px;float: left"></el-input>
+                                        <el-button type="primary" size="small" @click="sendValidationCode"
+                                                   :disabled="sendEmailLoading"
+                                                   v-loading="sendEmailLoading"
+                                                   :element-loading-text="loadingTime+'s后重试'"
+                                                   element-loading-spinner="el-icon-loading"
+                                                   element-loading-background="rgba(0, 0, 0, 0.8)">发送验证码</el-button>
+                                    </el-form-item>
+                                </el-form>
+                                <div slot="footer" class="dialog-footer">
+                                    <el-button :type="step!==3?'':'primary'" @click="dialogChangeEmailFormVisible = false" v-text="step!==3?'取 消':'完 成'"></el-button>
+                                    <el-button v-if="step === 1" type="primary" @click="submitForm('changeEmailFormStep1')">下一步</el-button>
+                                    <el-button v-if="step === 2" type="primary" @click="submitForm('changeEmailFormStep2')">确 定</el-button>
+                                </div>
+                            </el-dialog>
+                        </el-row>
+
+                        <!--TODO 注销账户-->
+                        <el-button type="danger" plain @click="openCancelAccountDialog" icon="el-icon-circle-close" style="margin: 5px">注销账户</el-button>
+                        <el-dialog title="注销账号" :visible.sync="dialogCancelAccountFormVisible" width="500px">
+                            <el-steps :active="step" finish-status="success" simple style="margin-top: 20px">
+                                <el-step title="步骤 1"></el-step>
+                                <el-step title="步骤 2"></el-step>
+                                <el-step title="步骤 3"></el-step>
+                            </el-steps>
+                            <div style="height: 30px"></div>
+
+
+                            <el-form v-show="step===1" :model="cancelAccountForm" ref="cancelAccountForm" label-width="100px" class="demo-ruleForm">
+                                <el-form-item v-if="step===1" label="您的邮箱">
+                                    <el-input disabled v-model="userInfo.email"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="验证码" prop="validationCode">
+                                    <el-input v-model="cancelAccountForm.validationCode" style="width: 250px;float: left"></el-input>
+                                    <el-button type="primary" size="small" @click="sendValidationCode"
+                                               :disabled="sendEmailLoading"
+                                               v-loading="sendEmailLoading"
+                                               :element-loading-text="loadingTime+'s后重试'"
+                                               element-loading-spinner="el-icon-loading"
+                                               element-loading-background="rgba(0, 0, 0, 0.8)">发送验证码</el-button>
+                                </el-form-item>
+                            </el-form>
+                            <div v-show="step===2">
+                                <h3>注销账号后不能反悔了哦</h3>
+                                <ul>
+                                    <li style="list-style-type: none">用户上传的文件将被清除</li>
+                                    <li style="list-style-type: none">用户的个人信息将被清除</li>
+                                </ul>
+                            </div><div v-show="step===3">
+                                <h2>注销账号成功</h2>
+                                <h4>即将前往登录页面</h4>
+                            </div>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button v-if="step !== 3" type="primary" @click="dialogCancelAccountFormVisible = false">取 消</el-button>
+                                <el-button v-if="step === 1" type="primary" @click="submitForm('cancelAccountForm')">下一步</el-button>
+                                <el-button v-if="step === 2" type="primary" @click="cancelAccount">确 定</el-button>
+                            </div>
+                        </el-dialog>
+                    </el-col>
+                </el-row>
+            </el-main>
+
+
+            <el-footer>
+                <el-row v-show="op===1||op===2">
+                    <el-col :span="2" :offset="4">
+                        <el-button type="primary" @click="createDir" size="small" icon="el-icon-folder-add" v-show="op===1">新建目录</el-button>
+                    </el-col>
+                    <el-col :span="6" :offset="op===1?6:12">
+                        <el-pagination background
+                                       @size-change="handleSizeChange"
+                                       @current-change="handleCurrentChange"
+                                       layout="sizes, prev, pager, next"
+                                       :page-sizes="[3, 5, 7, 9]"
+                                       :page-size="pageInfo.size"
+                                       :total="pageInfo.total"
+                                       :current-page="pageInfo.current">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-footer>
+
+        </el-container>
+    </div>
 </template>
 
 <script>
-import router from "@/router";
-
+    import router from "@/router";
+    import mammoth from "/1Asenior_up/cloud-disk-master1/cloud-disk-master/vue/node_modules/mammoth";
 export default {
   data() {
     var validatePassword = (rule, value, callback) =>{
@@ -531,8 +610,22 @@ export default {
           callback();
         }
       }, 500)
-    }
+        }
     return {
+        imgs: [
+            {
+                url:
+                    "https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg",
+                title: "图片1",
+                preview: "1"
+            },
+            {
+                url:
+                    "https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg",
+                title: "图片2",
+                preview: "1"
+            }
+        ],
       sendEmailLoading: false,
       loadingTime: 60,
       userInfo: {},
@@ -547,7 +640,8 @@ export default {
         size: 0,
         current: 0,
         pages: 0
-      },
+        },
+      shareUrl:'',
       loading: false,
       uploadFileList: [],
       uploadAvatarList: [],
@@ -556,6 +650,7 @@ export default {
       fileKeyWord: '',
       searchTableData: [],
       dialogTableVisible: false,
+      dialogShareVisible: false,
       dialogLogoutVisible: false,
       dialogUploadAvatarVisible: false,
       dialogUserFormVisible: false,
@@ -564,6 +659,9 @@ export default {
       dialogCancelAccountFormVisible: false,
       autoClearBin: 0,
       op: 1,
+      //在线阅览变量
+      vHtml: "",
+      wordURL:'../assets/test.docx',
 
       ruleForm: {
         name: '',
@@ -622,14 +720,36 @@ export default {
       handler(){
         this.fileKeyWord = ''
       }
-    }
+      }
+
   },
   created() {
     this.getUserInfo()
-    this.getPage(1, 5)
+     this.getPage(1, 5)
   },
 
   methods: {
+
+     
+      //在线查看word
+      readWordFromRemoteFile: function (url) {
+          var objFile = document.getElementById("fileId")
+          var files = objFile?.files //获取到文件列表     
+          for (var i = 0; i < files.length; i++) {
+              var reader = new FileReader() //新建一个FileReader       
+              reader.readAsArrayBuffer(files[i])
+              reader.onload = (evt) => { //读取完文件之后会回来这里          
+                  var data = evt?.target?.result // 读取文件内容          
+                  mammoth.convertToHtml({ arrayBuffer: data }).then(r => { this.serial_number = r.value }).done()
+              }
+          }
+
+      },
+      
+     viewSingle(row){
+
+    },
+
     //注销账号
     cancelAccount(){
       console.log("注销请求")
@@ -859,26 +979,43 @@ export default {
         }
       })
     },
-    //分页查询
-    getPage(currentPage, pageSize) {
-      this.$http({
-        url: '/file/' + currentPage + '/' + pageSize,
+    //分页查询(分享)
+    getSharePage(currentPage) {
+        this.$http({
+        url: '/searchShare/' + currentPage,
         headers: {
           'token': localStorage.getItem("token")
         },
         method: 'GET',
         params: {
-          curDir: this.curDir,
-          op: this.op
         }
-      }).then(res => {
-        this.tableData = res.data.data.filePage.records
-        this.pageInfo.total = res.data.data.filePage.total
-        this.pageInfo.size = res.data.data.filePage.size
-        this.pageInfo.current = res.data.data.filePage.current
-        this.pageInfo.pages = res.data.data.filePage.pages
+        }).then(res => {
+            console.log(res.data)
+        this.tableData = res.data.data.files
       })
-    },
+      },
+
+    //分页查询(文件)
+      getPage(currentPage, pageSize) {
+          this.$http({
+              url: '/file/' + currentPage + '/' + pageSize,
+              headers: {
+                  'token': localStorage.getItem("token")
+              },
+              method: 'GET',
+              params: {
+                  curDir: this.curDir,
+                  op: this.op
+              }
+          }).then(res => {
+              this.tableData = res.data.data.filePage.records
+              this.pageInfo.total = res.data.data.filePage.total
+              this.pageInfo.size = res.data.data.filePage.size
+              this.pageInfo.current = res.data.data.filePage.current
+              this.pageInfo.pages = res.data.data.filePage.pages
+          })
+      },
+
     // 处理多选
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -919,12 +1056,20 @@ export default {
       }
       this.op=2
       this.getPage(1,5)
-    },
+      },
+     //我的分享
+    //未完成ing
+      shiftShare() {
+          this.multipleSelection = []
+          this.op = 3
+          
+          this.getSharePage(1,5)
+      },
     //个人中心
     shiftUserCenter(){
       this.multipleSelection = []
       document.querySelector("#userCenter").click()
-      this.op=3
+      this.op=4
     },
     //隔行变色
     tableRowClassName({row, rowIndex}) {
@@ -982,7 +1127,35 @@ export default {
         URL.revokeObjectURL(elink.href); // 释放URL 对象
         document.body.removeChild(elink);
       })
-    },
+      },
+    //分享文件，产生分享链接
+    shareSingle(row) {
+       //未完成！！！！！！
+        console.log("分享时的信息" + row.id);
+        console.log("分享时item的信息" + this.curDir);
+        console.log(this);
+        
+        this.$http.get('/shareFile/'+row.id, {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        }).then(res => {
+            console.log("前端成功收到result" + res.data.data.shareUrl);
+            this.shareUrl = "http://localhost:8080/share?shareUrl=" + res.data.data.shareUrl;
+            this.dialogShareVisible = true
+        })
+        
+      },
+    //分享链接复制
+      copy() {
+          var input = document.createElement("input"); // 创建input对象
+          input.value = this.shareUrl; // 设置复制内容
+          document.body.appendChild(input); // 添加临时实例
+          input.select(); // 选择实例内容
+          document.execCommand("Copy"); // 执行复制
+          document.body.removeChild(input); // 删除临时实例
+          this.$message.success('复制成功！');
+      },
     //选择文件时,清空fileList
     delFile() {
       this.uploadFileList = [];
@@ -1250,7 +1423,8 @@ export default {
         this.searchTableData = res.data.data.searchFileList
         this.dialogTableVisible = true
       })
-    },
+      },
+
     //永久删除回收站中的所有文件
     deleteAllForever(){
       this.$confirm('此操作将永久删除回收站中的所有文件, 是否继续?', '提示', {
